@@ -1,0 +1,11 @@
+name: Web CI
+on: [push, pull_request]
+jobs:
+    build-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v4
+              with: { node-version: '22.13.1' }
+            - run: cd apps/web && npm ci
+            - run: cd apps/web && npm run lint && npm run typecheck && npm run build
