@@ -1,14 +1,13 @@
 'use client'
 import React from 'react'
 import Textfield from '../ui/Textfield'
+import Image from 'next/image';
 
-import { Inter } from 'next/font/google';
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-});
-
+//TODO: Dummy signin function. This is an acknowledgement that signIn functions remains to be written.
+function signIn(provider?: string , email?: string, password?: string) {
+    // TODO: Implement signup logic
+}
 
 // Auth is in Light mode only
 function Login() {
@@ -27,10 +26,10 @@ function Login() {
             </div>
             <button 
                 className="mt-4 px-2 py-3 w-1/4 border rounded hover:bg-gray-50"
-                onClick={signIn('google')}
+                onClick={() => signIn('google')}
             >
                 <div className='flex items-center justify-center'>
-                    <img src="google.png" alt="Google Logo" width={20} height={20} style={{ marginRight: '8px' }} />
+                    <Image src="google.png" alt="Google Logo" width={20} height={20} style={{ marginRight: '8px' }} />
                     Continue with Google
                 </div>
             </button>
