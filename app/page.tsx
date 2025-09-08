@@ -1,20 +1,13 @@
-import { ReactNode } from 'react';
-import { Inter } from 'next/font/google';
+import Home from "./home/page";
+import { Metadata } from "next";
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-});
-
-export const metadata = {
-  title: 'My App',
-  description: 'Using Inter font',
+export const metadata: Metadata = {
+  title: "TaskNest",
+  description: "A task management application",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function Page() {
   return (
-    <html lang="en" className={inter.className}>
-      <body>{children}</body>
-    </html>
+    <Home />
   );
 }
