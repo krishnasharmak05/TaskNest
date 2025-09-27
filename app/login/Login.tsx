@@ -1,11 +1,10 @@
 
 
 "use client"
-import React, { useEffect } from 'react'
+import React from 'react'
 import Textfield from '../ui/Textfield'
 import Image from 'next/image';
 import { signIn } from "next-auth/react"
-import Link from 'next/link';
 
 
 function performValidationOfEmail(email: string) {
@@ -46,7 +45,7 @@ async function signInWithEmailAndPassword(email?: string, password?: string) {
       }
 
       window.location.href = (res as any)?.url || '/';
-    } catch (err) {
+    } catch (_) {
       window.location.href = '/404';
       return Promise.reject(new Error("Signup failed"));
     }
@@ -78,7 +77,7 @@ export default function Login() {
             e.preventDefault();
             try {
               await signInWithEmailAndPassword(email, password);
-            } catch (err) {
+            } catch (_) {
               setError(true);
               await new Promise(r => setTimeout(r, 2000));
               setError(false);
