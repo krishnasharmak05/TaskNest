@@ -1,0 +1,13 @@
+name: Dummy Action
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  do-nothing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "This action does nothing! It is a placeholder for future actions"
