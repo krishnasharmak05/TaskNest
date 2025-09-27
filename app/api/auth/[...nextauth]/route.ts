@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import bcrypt from "bcrypt";
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -14,39 +15,115 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Lookup the user from the database.
-        // const user = await prisma.user.findUnique({
-        //   where: { email: credentials?.email },
-        // });
-        
-        // if (user && user.password === credentials?.password) {
-        //   return user;
-        // }
+        if (!credentials?.email || !credentials?.password) return null;
 
-        return Promise.reject(new Error("Not implemented yet"));
-        // If you return null then an error will be displayed advising the user to check their details.
-        // If you throw an error then it will be passed to the error page for your app to handle.
-        // If you return a user object, then that user will be logged in.
-        // If you return a string, then it will be treated as an error message.
-        return "not-implemented-yet" as any;
-      }
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user || !user.password) return null;
+
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+        if (!isValid) return null;
+
+        return user;
+      },
     }),
+
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }), 
+    }),
   ],
-   pages: {
-    signIn: "/signin", // Move to /auth/signin
+
+  pages: {
+    signIn: "/login",
+    newUser: "/signup",
     signOut: "/signout",
-    error: "/error", // Error code passed in query string as ?error=
-    verifyRequest: "/verify-request", // (used for check email message)
+    error: "/error",
   },
+
   session: {
-    strategy: "jwt",
+    strategy: "jwt", // DB sessions, so prisma.sessions table is used
   },
+
+  callbacks: {
+    async signIn({ account, profile }) {
+      if (account?.provider && profile?.email) {
+        const prismaUser = await prisma.user.upsert({
+          where: { email: profile.email },
+          create: {
+            email: profile.email,
+            name: profile.name,
+            emailVerified: new Date(),
+          },
+          update: {
+            name: profile.name,
+            emailVerified: new Date(),
+          },
+        });
+        await prisma.account.upsert({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId!,
+            },
+          },
+          create: {
+            userId: prismaUser.id,
+            type: account.type,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId!,
+            access_token: account.access_token,
+            refresh_token: account.refresh_token,
+            expires_at: account.expires_at,
+            token_type: account.token_type,
+            scope: account.scope,
+            id_token: account.id_token,
+            session_state: account.session_state,
+          },
+          update: {
+            access_token: account.access_token,
+            refresh_token: account.refresh_token,
+            expires_at: account.expires_at,
+            token_type: account.token_type,
+            scope: account.scope,
+            id_token: account.id_token,
+            session_state: account.session_state,
+          },
+        });
+      }
+      return true;
+    },
+    async redirect() {
+      return "/";
+    },
+
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
+
+  events: {
+    async createUser({ user }) {
+      console.log("New user created:", user.email);
+    },
+  },
+
   secret: process.env.NEXTAUTH_SECRET,
 });
-
 
 export { handler as GET, handler as POST };

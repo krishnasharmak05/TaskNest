@@ -5,7 +5,6 @@ import React, { useEffect } from 'react'
 import Textfield from '../ui/Textfield'
 import Image from 'next/image';
 import { signIn } from "next-auth/react"
-import Link from 'next/link';
 
 
 function performValidationOfEmail(email: string) {
@@ -37,7 +36,6 @@ async function signInWithEmailAndPassword(email?: string, password?: string, cnf
   // TODO: Please check this logic
   if (emailValid && passwordValid) {
     // TODO: Signin is not done. This is still WIP.
-
         try {
           const res = await signIn('credentials', {
             email,
@@ -47,7 +45,7 @@ async function signInWithEmailAndPassword(email?: string, password?: string, cnf
           });
           
           if ((res as any)?.error) {
-            console.error((res as any).error);
+            console.error((res as any).error);  
             window.location.href = '/404';
             return Promise.reject(new Error((res as any).error || "Signup failed"));
           }
@@ -62,7 +60,7 @@ async function signInWithEmailAndPassword(email?: string, password?: string, cnf
     }
 
 
-    // Auth is in Light mode only
+// Auth is in Light mode only
 export default function Signup() {
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
@@ -100,7 +98,7 @@ export default function Signup() {
               <p className=" text-red-400 text-sm">{error}</p>
             </div>
           }
-          <button className="mt-4 w-full px-4 py-3 border rounded-lg font-medium text-white bg-black">Sign In</button>
+          <button className="mt-4 w-full px-4 py-3 border rounded-lg font-medium text-white bg-black cursor-pointer">Sign Up</button>
         </form>
         <div className="my-4 flex items-center w-1/4">
           <div className="flex-grow h-px bg-gray-300"></div>
@@ -108,7 +106,7 @@ export default function Signup() {
           <div className="flex-grow h-px bg-gray-300"></div>
         </div>
         <button
-          className="mt-4 px-2 w-full max-w-sm py-3 border rounded-lg hover:bg-gray-200"
+          className="mt-4 px-2 w-full max-w-sm py-3 border rounded-lg hover:bg-gray-200 cursor-pointer"
           onClick={() => signIn('google')}
         >
           <div className='flex items-center justify-center font-medium'>
