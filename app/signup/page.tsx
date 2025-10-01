@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Login from "./Signup";
+import Signup from "./Signup";
 export const metadata: Metadata  = {
   title: 'Register in TaskNest',
   description: 'Create an account in TaskNest.',
@@ -7,5 +7,5 @@ export const metadata: Metadata  = {
 
 
 export default function LoginPage() {
-  return <Login />;
+  return <Signup />;
 }

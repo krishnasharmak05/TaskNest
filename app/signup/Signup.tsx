@@ -6,14 +6,14 @@ import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-function validateEmail(email: string) {
+export function validateEmail(email: string) {
   if (!email) return "Email cannot be empty";
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!re.test(email)) return "Please enter a valid email address";
   return null;
 }
 
-function validatePassword(password: string) {
+export function validatePassword(password: string) {
   if (!password) return "Password cannot be empty";
   if (password.length < 8) return "Password must be at least 8 characters";
   return null;
