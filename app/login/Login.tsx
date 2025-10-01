@@ -6,30 +6,10 @@ import Textfield from '../ui/Textfield'
 import Image from 'next/image';
 import { signIn } from "next-auth/react"
 
-
-function performValidationOfEmail(email: string) {
-  if (!email) {
-    alert("Email cannot be empty");
-    return false;
-  }
-  return true;
-}
-
-function performValidationOfPassword(password: string) {
-  if (!password) {
-    alert("Password cannot be empty");
-    return false;
-  }
-  return true;
-}
-
 async function signInWithEmailAndPassword(email?: string, password?: string) {
   if (!email) return alert("Email cannot be empty");
   if (!password) return alert("Password cannot be empty");
-  const emailValid = performValidationOfEmail(email);
-  const passwordValid = performValidationOfPassword(password);
-  // TODO: Please check this logic
-  if (emailValid && passwordValid) {
+  if (email && password) {
     try {
       const res = await signIn('credentials', {
         email,
@@ -40,19 +20,17 @@ async function signInWithEmailAndPassword(email?: string, password?: string) {
 
       if ((res as any)?.error) {
         console.error((res as any).error);
-        window.location.href = '/404';
-        return Promise.reject(new Error((res as any).error || "Signup failed"));
+        return Promise.reject(new Error((res as any).error || "Login failed"));
       }
 
       window.location.href = (res as any)?.url || '/';
+      return Promise.resolve();
     } catch (_) {
-      window.location.href = '/404';
-      return Promise.reject(new Error("Signup failed"));
+      return Promise.reject(new Error("Login failed"));
     }
   } else
     return Promise.reject(new Error("Invalid email or password"));
 
-  return Promise.reject(new Error("Please enter valid credentials"));
 }
 
 
@@ -88,20 +66,14 @@ export default function Login() {
           <Textfield placeholder="Password" isPassword={true} onChange={(e) => setPassword(e.target.value)} />
           {
             error &&
-            <div className="bg-green-200 w-full p-2">
+            <div className="bg-red-100 w-full p-2">
               <p className=" text-red-400 text-sm">Invalid email or password</p>
             </div>
           }
           <button 
           className="mt-4 w-full px-4 py-3 border rounded-lg
            font-medium text-white bg-black cursor-pointer" 
-           onClick={
-            () => signIn(
-              "credentials", {
-                redirect: true,
-                email, password,
-                callbackUrl: "/"
-              })}>Sign In</button>
+           >Sign In</button>
         </form>
         <div className="my-4 flex items-center w-1/4">
           <div className="flex-grow h-px bg-gray-300"></div>
