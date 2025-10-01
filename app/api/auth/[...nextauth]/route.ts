@@ -99,7 +99,7 @@ const handler = NextAuth({
       return true;
     },
     async redirect() {
-      return "/";
+      return "http://localhost:3000/";
     },
 
     async jwt({ token, user }) {

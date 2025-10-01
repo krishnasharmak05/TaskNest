@@ -4,14 +4,14 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 interface TextFieldProps {
     placeholder?: string;
     isPassword?: boolean;
+    value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 
-
-function TextField({ placeholder, isPassword = false, onChange }: TextFieldProps) {
+function TextField({ placeholder, isPassword = false, onChange, value }: TextFieldProps) {
     const [showPassword, setShowPassword] = useState<boolean>(!isPassword);
-    const [value, setValue] = useState<string>("")
+    const [localValue, setLocalValue] = useState<string>(value ?? "");
     return (
         <div
             className="w-full my-2 p-2 rounded-lg flex items-center 
@@ -27,7 +27,7 @@ function TextField({ placeholder, isPassword = false, onChange }: TextFieldProps
                 title={"Enter your " + placeholder?.toLowerCase() + " here"}
                 onChange={
                     (e) => {
-                        setValue(e.target.value);
+                        setLocalValue(e.target.value);
                         onChange?.(e);
                     }
                 }
@@ -38,9 +38,9 @@ function TextField({ placeholder, isPassword = false, onChange }: TextFieldProps
                         onClick={() => setShowPassword(!showPassword)}
                         className="ml-2 text-gray-500 hover:text-gray-800 focus:outline-none"
                     >
-                        {value.length > 0?
-                        showPassword?
-                            <FaEyeSlash /> : <FaEye />: <></>}
+                        {localValue.length > 0 ?
+                            showPassword ?
+                                <FaEyeSlash /> : <FaEye /> : <></>}
                     </button>
                 )
             }
