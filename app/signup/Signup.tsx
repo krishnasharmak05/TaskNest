@@ -76,11 +76,6 @@ export default function Signup() {
         return;
       }
 
-      if (result.error) {
-        setError(result.error);
-        return;
-      }
-
       router.push(result.url ?? "/");
 
       // If signIn returned a url, prefer it (and ensure it's absolute); otherwise fallback to "/"
