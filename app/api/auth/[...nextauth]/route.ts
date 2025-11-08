@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth from "next-auth";
+import type { AuthOptions, Session, User } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import bcrypt from "bcrypt";
-
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -47,7 +47,7 @@ const handler = NextAuth({
   },
 
   session: {
-    strategy: "jwt", // DB sessions, so prisma.sessions table is used
+    strategy: "jwt",
   },
 
   callbacks: {
@@ -98,32 +98,35 @@ const handler = NextAuth({
       }
       return true;
     },
+
     async redirect() {
-      return  process.env.NEXTAUTH_URL || "/";
+      return process.env.NEXTAUTH_URL || "/";
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user?: User | undefined }) {
       if (user) {
-        token.id = user.id;
+        (token as any).id = (user as any).id;
       }
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        session.user.id = token.id as string;
+        (session.user as any).id = token.id as string;
       }
       return session;
     },
   },
 
   events: {
-    async createUser({ user }) {
+    async createUser({ user }: { user: User }) {
       console.log("New user created:", user.email);
     },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
