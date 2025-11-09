@@ -1,6 +1,6 @@
 // __tests__/auth/Login.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import Login from '../../app/login/Login';
+import Login from '../../../app/login/Login';
 import * as nextAuth from 'next-auth/react';
 
 jest.mock('next-auth/react');

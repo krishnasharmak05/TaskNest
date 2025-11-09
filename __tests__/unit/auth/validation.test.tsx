@@ -1,5 +1,5 @@
 // __tests__/validation.test.ts
-import { validateEmail, validatePassword } from '../../app/signup/Signup';
+import { validateEmail, validatePassword } from '../../../app/signup/Signup';
 
 describe('Email Validation', () => {
   it('returns error for empty email', () => {
