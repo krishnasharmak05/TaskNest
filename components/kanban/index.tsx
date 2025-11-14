@@ -32,7 +32,7 @@ interface KanbanCardProps {
   moveButtonLabel: string
 }
 
-export function KanbanCard({ title, description, onMove, onDelete, moveButtonLabel }: KanbanCardProps) {
+export function KanbanCard ({ title, description, onMove, onDelete, moveButtonLabel }: KanbanCardProps) {
   return (
     <div className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
       <h3 className="font-medium text-card-foreground mb-2">{title}</h3>

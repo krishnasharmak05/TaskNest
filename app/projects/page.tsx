@@ -11,7 +11,7 @@ export default function ProjectsPage() {
   const [formData, setFormData] = useState({ name: "", description: "" })
   const [error, setError] = useState<string | null>(null)
 
-  // 🟢 Fetch projects when the component mounts
+  // Fetch projects when the component mounts
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -32,7 +32,7 @@ export default function ProjectsPage() {
     fetchProjects()
   }, [])
 
-  // 🟢 Handle create new project
+  // Handle create new project
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsCreating(true)
@@ -50,7 +50,7 @@ export default function ProjectsPage() {
       }
 
       const newProject = await response.json()
-      setProjects((prev) => [newProject, ...prev]) // update UI immediately
+      setProjects((prev) => [newProject, ...prev])
       setFormData({ name: "", description: "" })
     } catch (error: any) {
       console.error("Failed to create project:", error)
@@ -109,7 +109,7 @@ export default function ProjectsPage() {
             {error && <p className="text-red-500 mt-3">{error}</p>}
           </div>
 
-          {/* 🟢 Display projects */}
+          {/* Display projects */}
           <div className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-card-foreground mb-4">Your Projects</h2>
 

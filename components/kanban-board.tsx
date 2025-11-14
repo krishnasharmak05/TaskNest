@@ -145,7 +145,7 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
               key={task.id}
               title={task.title}
               description={task.description}
-              onMove={() => handleMoveTask(task.id, "in_progress")}
+              onMove={() => handleMoveTask(task.id, "DOING")}
               onDelete={() => handleDeleteTask(task.id)}
               moveButtonLabel="Start"
             />
@@ -158,7 +158,7 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
               key={task.id}
               title={task.title}
               description={task.description}
-              onMove={() => handleMoveTask(task.id, "done")}
+              onMove={() => handleMoveTask(task.id, "DONE")}
               onDelete={() => handleDeleteTask(task.id)}
               moveButtonLabel="Complete"
             />
@@ -171,7 +171,7 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
               key={task.id}
               title={task.title}
               description={task.description}
-              onMove={() => handleMoveTask(task.id, "todo")}
+              onMove={() => handleMoveTask(task.id, "TODO")}
               onDelete={() => handleDeleteTask(task.id)}
               moveButtonLabel="Reopen"
             />

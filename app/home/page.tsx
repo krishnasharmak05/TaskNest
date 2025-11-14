@@ -4,6 +4,19 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import NextAuth from "next-auth"
+import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
+
 
 interface Project {
   id: string
@@ -23,6 +36,19 @@ export default function Dashboard() {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
+  const handleDelete = async (projectId: string) => {
+  const res = await fetch(`/api/projects/${projectId}`, {
+    method: "DELETE",
+  })
+
+  if (res.ok) {
+    // Remove project from UI
+    setProjects((prev) => prev.filter((p) => p.id !== projectId))
+  } else {
+    console.error("Failed to delete project")
+  }
+}
+
 
   const fetchProjects = async () => {
       try {
@@ -38,17 +64,6 @@ export default function Dashboard() {
       }
     }
   useEffect(() => {
-    () => {
-        const data: Project = {
-          id: "1",
-          name: "Sample Project",
-          description: "This is a sample project description.",
-          createdAt: formatDate(new Date()),
-          ownerId: session.user.id
-        }
-        setProjects([data])
-        setLoading(false)
-      }
     fetchProjects();
   }, []);
 
@@ -86,27 +101,69 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow"
-                >
-                  <h2 className="text-xl font-semibold text-card-foreground mb-2">{project.name}</h2>
-                  <p className="text-muted-foreground text-sm mb-4">{project.description || "No description"}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(project.createdAt).toLocaleDateString()}
-                    </span>
-                    <Link
-                      href={`/projects/${project.id}`}
-                      className="text-primary hover:underline text-sm font-medium"
-                    >
-                      View →
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+  {projects.map((project) => (
+    <div
+      key={project.id}
+      className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow"
+    >
+      {/* Title + Delete Row */}
+      <div className="flex items-start justify-between mb-2">
+        <h2 className="text-xl font-semibold text-card-foreground">
+          {project.name}
+        </h2>
+
+        {/* Delete Button */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm"   className="cursor-pointer">
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Project?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete the project and all its tasks.
+                This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => handleDelete(project.id)}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete Project
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      {/* Description */}
+      <p className="text-muted-foreground text-sm mb-4">
+        {project.description || "No description"}
+      </p>
+
+      {/* Footer: Date + View */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-muted-foreground">
+          {new Date(project.createdAt).toLocaleDateString()}
+        </span>
+
+        <Link
+          href={`/projects/${project.id}`}
+          className="text-primary hover:underline text-sm font-medium"
+        >
+          View →
+        </Link>
+      </div>
+    </div>
+  ))}
+</div>
+
           )}
         </div>
       </main>
