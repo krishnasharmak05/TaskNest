@@ -1,22 +1,33 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-const nextJest = require('next/jest');
-const createJestConfig = nextJest({ dir: './' });
+// jest.config.js
+const nextJest = require('next/jest')
 
+const createJestConfig = nextJest({
+  dir: './',
+})
 
-// Add any custom configuration options you need here
 const customJestConfig = {
-  // Set test environment to jsdom for React components
-  testEnvironment: 'jsdom',
-  
-  // Setup files to run before tests (e.g., to import @testing-library/jest-dom matchers)
-  // You might need to create this file: jest.setup.js
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'], 
-  
-  // If you use module aliases (e.g., `@/components`), you must configure them here
-  // moduleNameMapper: {
-  //   '^@/(.*)$': '<rootDir>/$1',
-  // },
-};
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: 'jest-environment-jsdom', // Make sure this is jsdom
+  moduleDirectories: ['node_modules', '<rootDir>/'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
+  testMatch: [
+    '**/__tests__/**/*.[jt]s?(x)',
+    '**/?(*.)+(spec|test).[jt]s?(x)',
+  ],
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!src/**/*.d.ts',
+  ],
+}
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig);
+module.exports = async () => {
+  const jestConfig = await createJestConfig(customJestConfig)()
+  
+  jestConfig.transformIgnorePatterns = [
+    '/node_modules/(?!(msw|@mswjs|@bundled-es-modules|until-async|strict-event-emitter|@open-draft|is-node-process|outvariant)/)',
+  ]
+  
+  return jestConfig
+}

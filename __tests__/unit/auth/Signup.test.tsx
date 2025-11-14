@@ -1,6 +1,6 @@
 // __tests__/Signup.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import Signup from '../../app/signup/Signup';
+import Signup from '../../../app/signup/Signup';
 import * as nextAuth from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
