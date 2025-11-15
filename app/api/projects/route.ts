@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../auth/[...nextauth]/authOptions"
+import { authOptions } from "@/lib/authOptions"
 import { prisma } from "@/lib/prisma"
 
 // 🟢 GET: Fetch all projects for the current user
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
+    console.log("Session in /api/projects GET:", session)
     if (!session?.user?.id) {
+      console.log("Unauthorized access attempt to /api/projects");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -18,7 +20,6 @@ export async function GET() {
       },
       orderBy: { createdAt: "desc" },
     })
-
     return NextResponse.json(projects)
   } catch (error) {
     console.error("GET /api/projects error:", error)

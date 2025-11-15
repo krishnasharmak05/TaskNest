@@ -3,7 +3,7 @@
  */
 
 import { render, screen, waitFor } from "@testing-library/react"
-import Home from "@/app/page"
+import Home from "@/app/home/page"
 import { server } from "@/__mocks__/server"
 import { http, HttpResponse } from "msw"
 

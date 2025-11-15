@@ -1,13 +1,13 @@
-import Home from "./home/page";
-import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
-export const metadata: Metadata = {
-  title: "TaskNest",
-  description: "A task management application",
-};
+export default async function Page() {
+  const session = await getServerSession(authOptions);
 
-export default function Page() {
-  return (
-    <Home />
-  );
+  if (session) {
+    redirect("/home");
+  } else {
+    redirect("/login");
+  }
 }
